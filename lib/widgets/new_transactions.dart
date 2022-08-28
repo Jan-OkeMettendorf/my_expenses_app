@@ -7,15 +7,15 @@ class NewTransaction extends StatelessWidget {
   final amountInputController = TextEditingController();
   NewTransaction(this.newTransaction);
 
-  void submitHandler() {
+  void submitHandler(BuildContext bctx) {
     final enteredTitle = textInputController.text;
     final enteredAmount = double.parse(amountInputController.text);
 
     if(enteredTitle.isEmpty || enteredAmount <= 0){
       return;
     }
-
     newTransaction(textInputController.text, amountInputController.text);
+    Navigator.of(bctx).pop();
   }
 
   @override
@@ -30,7 +30,7 @@ class NewTransaction extends StatelessWidget {
               decoration: InputDecoration(label: Text('title')),
               controller: textInputController,
               onSubmitted: (_) {
-                submitHandler();
+                submitHandler(context);
               },
             ),
             TextField(
@@ -38,14 +38,14 @@ class NewTransaction extends StatelessWidget {
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               controller: amountInputController,
               onSubmitted: (_) {
-                submitHandler();
+                submitHandler(context);
                 },
             ),
             Container(
               width: 100,
               child: FlatButton(
                   onPressed: () {
-                    submitHandler;
+                    submitHandler(context);
                   },
                   color: Colors.blue,
                   child: Text('Add')),

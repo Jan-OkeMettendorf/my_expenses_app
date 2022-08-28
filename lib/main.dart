@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:myexpensesapp/widgets/user_transactions.dart';
+import 'package:myexpensesapp/widgets/new_transactions.dart';
+import 'package:myexpensesapp/widgets/transaction_list.dart';
+
+import 'models/transaction.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,8 +34,36 @@ class MyHomePage extends StatefulWidget {
 }
 
 class MyHomePageState extends State<MyHomePage> {
-  late String titleInput ="";
+  late String titleInput = "";
   late int amountInput;
+
+  List<Transaction> _myTransactions = [
+    Transaction("T1", "Shoes", 33.99, DateTime.now()),
+    Transaction("T2", "Shirt", 13.99, DateTime.now()),
+    Transaction("T2", "Shirt", 13.99, DateTime.now()),
+    Transaction("T2", "Shirt", 13.99, DateTime.now()),
+  ];
+
+  void newTransactionHandler(String titleInput, String amountInput) {
+    int countTransactions = _myTransactions.length + 1;
+    Transaction transaction = Transaction("T" + countTransactions.toString(),
+        titleInput, double.parse(amountInput), DateTime.now());
+    setState(() {
+      _myTransactions = [..._myTransactions, transaction];
+    });
+  }
+
+  void _startAddNewTransaction(BuildContext ctx) {
+    showModalBottomSheet(
+        context: ctx,
+        builder: (_) {
+          return GestureDetector(
+            onTap: () {},
+            child: NewTransaction(newTransactionHandler),
+            onVerticalDragDown: (_){},
+          );
+        });
+  }
 
   handleChange(val) => {titleInput = val};
 
@@ -41,6 +72,11 @@ class MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          IconButton(
+              onPressed: () => _startAddNewTransaction(context),
+              icon: Icon(Icons.add))
+        ],
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -50,10 +86,15 @@ class MyHomePageState extends State<MyHomePage> {
             // mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              UserTransaction(),
+              TransactionList(_myTransactions),
             ],
           ),
         ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _startAddNewTransaction(context),
+        child: Icon(Icons.add),
       ),
     );
   }
